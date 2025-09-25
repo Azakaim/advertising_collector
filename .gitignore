@@ -1,0 +1,8 @@
+.env
+.idea/
+__pycache__/
+.venv
+service_account.json
+*json
+*test*
+*.parquet
