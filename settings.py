@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     OZON_REFRESH_TOKEN_URL: str = Field("", env="OZON_REFRESH_TOKEN_URL")
     OZON_ADS_IDS_URL: str = Field("",env="OZON_ADS_IDS_URL")
     OZON_ADS_COMPANIES_URL: str = Field("",env="OZON_ADS_COMPANIES_URL")
+    OZON_STATISTICS_STATUS_URL: str = Field("", env="OZON_STATISTICS_STATUS_URL")
     DATE_SINCE: str = Field("", env="DATE_SINCE")
     DATE_TO: str = Field("", env="DATE_TO")
 
