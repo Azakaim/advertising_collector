@@ -1,7 +1,9 @@
 from datetime import *
+from itertools import batched
 from zoneinfo import ZoneInfo
 
 from src.dto.schemas_dto import StatusUIDCollection, AdsItem
+from src.infrastructure.cache import cache
 from src.schemas.shemas import SellerAccount
 
 
@@ -28,3 +30,49 @@ async def get_converted_date_by_local(date_since, date_to):
 async def get_success_statuses_ads_ids(success_statuses: StatusUIDCollection) -> list[AdsItem]:
     items = [si for si in success_statuses.items if si.meta.state == "OK"]
     return items
+
+async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] , ads_ids: list, date_from: date, date_to: date):
+    last_version_ads_stats_by_id = {}
+    for batch in batched(ads_ids, 10):
+        # переворачиваем список если вдруг найдем одинаковые айдишники с успешным статусом
+        # проверив все id получим последний актуальный те первое вхождение
+        for sai in success_ads_ids[::-1]:
+            for _id in sai.campaigns:
+                if int(_id.id) not in batch:
+                    last_version_ads_stats_by_id.update({_id.id: ""})
+                else:
+                    if (sai.meta.request.date_from != str(date_from)
+                            and sai.meta.request.date_to != str(date_to)):
+                        last_version_ads_stats_by_id.update({_id.id: ""})
+                    else:
+                        # TODO доделать случай если и айдишник есть и дата совпадает ,мысль такая что если совпааде тто вернуть последний обьект уид типа для получения
+                        last_version_ads_stats_by_id[_id.id] = sai.meta.link
+                    if last_version_ads_stats_by_id:
+                        last_version_ads_stats_by_id.update(last_version_ads_stats_by_id) if _id.id not in last_version_ads_stats_by_id.keys() else None
+    changed_id_by_link = await reverse_key_value(last_version_ads_stats_by_id)
+    return changed_id_by_link
+
+async def flatten_list(nested_l: list) -> list:
+    flattened = []
+    for i in nested_l:
+        if isinstance(i, list):
+            flattened.extend(await flatten_list(i))
+        else:
+            flattened.append(i)
+    return flattened
+
+async def reverse_key_value(dictionary: dict) -> dict:
+    new_dict:dict[str, list] = {}
+    for key, value in dictionary.items():
+        if value not in new_dict:
+            new_dict[value] = [key]
+        else:
+            new_dict[value].append(key)
+    return new_dict
+
+async def make_cache(key, data):
+    cache.set(key, data.model_dump_json(), ex=86400)
+    return True
+
+async def get_cache(key):
+    return cache.get(key)

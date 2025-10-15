@@ -10,5 +10,4 @@ dateparser==1.2.2
 numpy==2.3.3
 pandas==2.3.3
 gspread==6.2.1
-async-timeout==5.0.1
 redis==6.4.0
