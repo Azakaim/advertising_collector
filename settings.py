@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     # GOOGLE_BASE_TOP_SHEET_TITLES: str = Field("", env="GOOGLE_SHEET_BASE_TITLES")
     # GOOGLE_BASE_SHEETS_TITLES_BY_ACC: str = Field("", env="GOOGLE_BASE_SHEETS_TITLES_BY_ACC")
 
+    PATH_TO_SAVE_CSV: str = Field("", env="OZON_BASE_URL")
+
+    GOOGLE_SHEET_ID: str = Field("", env="GOOGLE_SHEET_ID")
+    GOOLGLE_SERVICE_ACCOUNT_CREDS_PATH: str = Field("", env="GOOLGLE_SERVICE_ACCOUNT_CREDS_PATH")
+    GOOGLE_SHEET_TITLES: str = Field("", env="GOOGLE_SHEET_TITLES")
+
+    OZON_STATISTICS_REPORT_URL: str = Field("", env="OZON_STATISTICS_REPORT_URL")
     OZON_BASE_URL: str = Field("", env="OZON_BASE_URL")
     OZON_NAME_LK: str = Field("", env="OZON_NAME_LK")
     OZON_CLI_IDS: str = Field("", env="OZON_CLI_IDS")
@@ -23,7 +30,7 @@ class Settings(BaseSettings):
     OZON_REFRESH_TOKEN_URL: str = Field("", env="OZON_REFRESH_TOKEN_URL")
     OZON_ADS_IDS_URL: str = Field("",env="OZON_ADS_IDS_URL")
     OZON_ADS_COMPANIES_URL: str = Field("",env="OZON_ADS_COMPANIES_URL")
-    OZON_STATISTICS_STATUS_URL: str = Field("", env="OZON_STATISTICS_STATUS_URL")
+    OZON_STATISTICS_STATUSES_URL: str = Field("", env="OZON_STATISTICS_STATUSES_URL")
     DATE_SINCE: str = Field("", env="DATE_SINCE")
     DATE_TO: str = Field("", env="DATE_TO")
 

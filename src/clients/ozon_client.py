@@ -31,8 +31,11 @@ class OzonClient(BaseRateLimitedHttpClient):
     async def fetch_advertising_ids(self, headers: dict) -> Optional[Any]:
         return await self.request("GET", self.ads_ids_url, headers=headers)
 
-    async def fetch_advertising_company_statistics(self, data: RequestBodyAdsCompanies, headers: dict) -> Optional[Any]:
-        return await self.request("POST", self.ads_companies_url, json=data.model_dump(), headers=headers)
+    async def fetch_stats_report(self,link: str, headers: dict) -> Optional[Any]:
+        return await self.request("GET", self.base_url + link, headers=headers)
 
-    async def fetch_statistics_status(self,uid: str, headers: dict) -> Optional[Any]:
-        return await self.request("GET", self.statistics_status_url + uid, headers=headers)
+    async def fetch_advertising_company_statistics(self, data: RequestBodyAdsCompanies, headers: dict) -> Optional[Any]:
+        return await self.request("POST", self.ads_companies_url, json=data.model_dump(by_alias=True), headers=headers)
+
+    async def fetch_statistics_statuses(self, headers: dict) -> Optional[Any]:
+        return await self.request("GET", self.statistics_status_url, headers=headers)

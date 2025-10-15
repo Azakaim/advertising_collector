@@ -57,11 +57,14 @@ class OzonCliBound:
         await self.refresh_token()
         return await self._base.fetch_advertising_ids(headers=self.headers)
 
+    async def fetch_stats_report(self, link: str) -> Optional[Any]:
+        return await self._base.fetch_stats_report(link, headers=self.headers)
+
     async def fetch_advertising_company_statistics(self, data: RequestBodyAdsCompanies) -> Optional[Any]:
         return await self._base.fetch_advertising_company_statistics(data, headers=self.headers)
 
-    async def fetch_statistics_status(self, uid: str) -> Optional[Any]:
-        return await self._base.fetch_statistics_status(uid, headers=self.headers)
+    async def fetch_statistics_statuses(self) -> Optional[Any]:
+        return await self._base.fetch_statistics_statuses(headers=self.headers)
 
     async def request(self, method: str, endpoint: str, *, json: Optional[dict]=None):
         return await self._base.request(method, endpoint, json=json, headers=self.headers)

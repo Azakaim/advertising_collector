@@ -56,6 +56,10 @@ class RequestBodyAdsCompanies(BaseModel):
     campaigns: list[str]
     d_from: str = Field(default='', alias='from')
     d_to: str = Field(default='', alias='to')
-    dateFrom: str = Field(default='', alias='date_from')
-    dateTo: str = Field(default='', alias='date_to')
-    groupBy: str = Field(default='DATE', alias='group_by')
+    date_from: str = Field(default='', alias='dateFrom')
+    date_to: str = Field(default='', alias='dateTo')
+    group_by: str = Field(default='DATE', alias='groupBy')
+
+    model_config = {
+            "populate_by_name": True
+        }

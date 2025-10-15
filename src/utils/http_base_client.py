@@ -22,8 +22,8 @@ class APIError(RuntimeError):
         self.body = body
 
 class BaseRateLimitedHttpClient(BaseModel):
-    concurrency: int = 45  # количество параллельных запросов
-    default_rps: int = 45  # дефолтный лимит
+    concurrency: int = 1  # количество параллельных запросов
+    default_rps: int = 1  # дефолтный лимит
     base_url: str
 
     _sem: asyncio.Semaphore = PrivateAttr(default=None)  # семафор для ограничения параллельных запросов
@@ -73,7 +73,7 @@ class BaseRateLimitedHttpClient(BaseModel):
                     if resp.status_code == 429:
                         delay = parse_retry_after_seconds(resp.headers, default=30.5)
                         await asyncio.sleep(delay)
-                        raise APIError(resp.status_code, endpoint, resp.text)
+                        return APIError(resp.status_code, endpoint, resp.text)
                     if resp.status_code == 401:
                         # 401 — ошибка авторизации, не ретраим
                         not_auth = APIError(resp.status_code, endpoint, resp.text)

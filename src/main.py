@@ -17,7 +17,7 @@ async def main() -> None:
         ads_ids_url=proj_settings.OZON_ADS_IDS_URL,
         ads_companies_url=proj_settings.OZON_ADS_COMPANIES_URL,
         refresh_token_url=proj_settings.OZON_REFRESH_TOKEN_URL,
-        statistics_status_url=proj_settings.OZON_STATISTICS_STATUS_URL,
+        statistics_status_url=proj_settings.OZON_STATISTICS_STATUSES_URL,
     )
     await run_pipeline(ozon_cli, cli_ids, cli_secrets, date_from, date_to)
 

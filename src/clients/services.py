@@ -1,10 +1,13 @@
+import asyncio
 from typing import Any
 from itertools import batched
 
 from pydantic import BaseModel
 
 from src.clients.ozon_bound_client import OzonCliBound
+from src.dto.schemas_dto import StatusUIDCollection, AdsOzonSchema
 from src.schemas.shemas import CollectionAdsCompanies, RequestBodyAdsCompanies
+from src.utils.http_base_client import APIError
 
 
 class OzonService(BaseModel):
@@ -20,32 +23,31 @@ class OzonService(BaseModel):
         parsed_ids = CollectionAdsCompanies(**ads_data)
         return [ids.id for ids in parsed_ids.ads_list]
 
-    async def get_statistics_status(self, uid: str) -> Any:
-        req = self.cli.fetch_statistics_status(uid)
+    async def get_statistics_statuses(self) -> Any:
+        statuses = await self.cli.fetch_statistics_statuses()
+        return StatusUIDCollection(**statuses)
 
-    async def get_advertising_companies_by_acc(self, ads_ids: list[int], date_from: str, date_to: str) -> Any:
+    async def get_advertising_companies_stats(self, ads_ids: list[int], date_from: str, date_to: str) -> Any:
         """
-
         :param ads_ids: list
         :param date_from: str format 2000-12-31
         :param date_to: str format 2000-12-31
-        :return:
+        :return: uids of companies stats
         """
-        result = []
-        count = 0
-        for batch in batched(ads_ids, 1):
-            if count == 0:
-                count+=1
-                continue
-            list(batch)
-            body = RequestBodyAdsCompanies(d_to='',d_from='',
-                date_from=date_from,
-                date_to=date_to,
+        statistics_ads_result = []
+        for batch in batched(ads_ids, 10):
+            body = RequestBodyAdsCompanies(
                 campaigns=[str(x) for x in list(batch)],
+                d_from=date_from,
+                d_to=date_to,
+                group_by="NO_GROUP_BY"
             )
             ads_co = await self.cli.fetch_advertising_company_statistics(data=body)
-            uid = ads_co
+            if isinstance(ads_co, APIError):
+                return None
+            statistics_ads_result.append(ads_co)
+        return statistics_ads_result
 
-            result.extend(ads_co)
-
-        print(result)
+    async def get_report(self, prepared_stats_link):
+        ads_results =  await self.cli.fetch_stats_report(prepared_stats_link)
+        return AdsOzonSchema.convert(ads_results)
