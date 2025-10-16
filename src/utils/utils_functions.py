@@ -31,7 +31,7 @@ async def get_success_statuses_ads_ids(success_statuses: StatusUIDCollection) ->
     items = [si for si in success_statuses.items if si.meta.error is None]
     return items
 
-async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] , ads_ids: list, date_from: date, date_to: date):
+async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] | list[int], ads_ids: list, date_from: date, date_to: date):
     last_version_ads_stats_by_id = {}
     for batch in batched(ads_ids, 10):
         # переворачиваем список если вдруг найдем одинаковые айдишники с успешным статусом
@@ -43,13 +43,13 @@ async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] , ads_ids: list, dat
                         last_version_ads_stats_by_id.update({_id.id: ""})
                     else:
                         if (sai.meta.request.date_from != str(date_from)
-                                and sai.meta.request.date_to != str(date_to)):
-                            last_version_ads_stats_by_id.update({_id.id: ""})
+                                and sai.meta.request.date_to != str(date_to)) or sai.meta.link is None:
+                            last_version_ads_stats_by_id.update({_id.id: sai.meta.state})
                         else:
                             # TODO доделать случай если и айдишник есть и дата совпадает ,мысль такая что если совпааде тто вернуть последний обьект уид типа для получения
                             last_version_ads_stats_by_id[_id.id] = sai.meta.link
-                        if last_version_ads_stats_by_id:
-                            last_version_ads_stats_by_id.update(last_version_ads_stats_by_id) if _id.id not in last_version_ads_stats_by_id.keys() else None
+                        # if last_version_ads_stats_by_id:
+                        #     last_version_ads_stats_by_id.update(last_version_ads_stats_by_id) if _id.id not in last_version_ads_stats_by_id.keys() else None
             else:
                 last_version_ads_stats_by_id.update({sai: ""})
     changed_id_by_link = await reverse_key_value(last_version_ads_stats_by_id)

@@ -24,18 +24,19 @@ async def run_pipeline(ozon_cli: OzonClient,
     # уточняем есть ли уже готовые отчеты
     status_reports = await ozon_service.get_statistics_statuses()
     # если отчеты есть проверяем статусы
-    success_statuses_ads_ids = await get_success_statuses_ads_ids(status_reports) if status_reports else None
+    ads_ids_by_statuses = await get_success_statuses_ads_ids(status_reports) \
+                            if status_reports else ads_ids # если статусов нет то берем ads_ids
     # отсортировать id рекламных компаний со статусами ОК, взять только те по которым мы еще не делали запрос на статистику
-    link_by_ads_ids = await get_sorted_ads_ids(success_ads_ids=success_statuses_ads_ids
-                                                if success_statuses_ads_ids else ads_ids, # если статусов нет то берем ads_ids
+    link_by_ads_ids = await get_sorted_ads_ids(success_ads_ids=ads_ids_by_statuses,
                                                ads_ids=ads_ids,
                                                date_from=date_since,
                                                date_to=date_till)
     # собираем отчеты
     reports = []
+    status = link_by_ads_ids.keys()
     for link in link_by_ads_ids :
         # важно если в рекламе за указанную дату не было метрик результат None
-        if link:
+        if link and (link != "NOT_STARTED"):
             report = await ozon_service.get_report(link)
             if report is not None:
                 reports.extend(report)
@@ -47,7 +48,7 @@ async def run_pipeline(ozon_cli: OzonClient,
         uids = await ozon_service.get_advertising_companies_stats(ads_ids=sorted_ads_ids,
                                                                   date_from=date_since,
                                                                   date_to=date_till)
-    print()
+    print(f"Обновлять нечего, статус для {ads_ids} : {status}")
     # TODO дописать логику для работы если уид получили то коллектим со всех кабинетов
     # if uids:
     #
