@@ -1,4 +1,5 @@
 from src.clients.ozon_bound_client import OzonCliBound
+from src.dto.schemas_dto import AdsOzonSchema
 from src.services.ozon_services import OzonService
 from src.utils.utils_functions import get_converted_date_by_local, get_success_statuses_ads_ids, get_sorted_ads_ids, \
     flatten_list
@@ -26,7 +27,7 @@ async def get_ads_analytics(ozone_bound: OzonCliBound,
                                                date_from=date_since,
                                                date_to=date_till)
     # собираем отчеты
-    reports = []
+    reports: list[AdsOzonSchema] = []
     status = link_by_ads_ids.keys()
     for link in link_by_ads_ids:
         # важно если в рекламе за указанную дату не было метрик результат None

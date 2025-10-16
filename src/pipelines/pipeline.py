@@ -4,10 +4,12 @@ from src.clients.ozon_bound_client import OzonCliBound
 from src.clients.ozon_client import OzonClient
 from src.pipelines.pipeline_steps import get_ads_analytics
 from src.schemas.shemas import SellerAccount
+from src.services.google_sheet_service import GoogleSheetService
 from src.utils.utils_functions import extract_sellers
 
 
 async def run_pipeline(ozon_cli: OzonClient,
+                       google_sheet: GoogleSheetService,
                        cli_ids: list[str],
                        cli_secrets: list[str],
                        lk_names: list[str],
@@ -25,6 +27,8 @@ async def run_pipeline(ozon_cli: OzonClient,
 
     results = await asyncio.gather(*tasks)
 
+    # TODO дописать логику записи в гугл таблицу
+    google_sheet.create_values_to_google_sheet()
     print(results)
     # ozone_bound = OzonCliBound(ozon_cli,
     #                            client_id=cli_ids[0],
