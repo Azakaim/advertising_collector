@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any
 from itertools import batched
 
@@ -21,20 +20,19 @@ class OzonService(BaseModel):
     async def get_advertising_ids(self) -> Any:
         ads_data = await self.cli.fetch_advertising_ids()
         parsed_ids = CollectionAdsCompanies(**ads_data)
-        return [ids.id for ids in parsed_ids.ads_list]
+        return [str(ids.id) for ids in parsed_ids.ads_list]
 
     async def get_statistics_statuses(self) -> Any:
         statuses = await self.cli.fetch_statistics_statuses()
         return StatusUIDCollection(**statuses)
 
-    async def get_advertising_companies_stats(self, ads_ids: list[int], date_from: str, date_to: str) -> Any:
+    async def get_advertising_companies_stats(self, ads_ids: list[int], date_from: str, date_to: str):
         """
         :param ads_ids: list
         :param date_from: str format 2000-12-31
         :param date_to: str format 2000-12-31
         :return: uids of companies stats
         """
-        statistics_ads_result = []
         for batch in batched(ads_ids, 10):
             body = RequestBodyAdsCompanies(
                 campaigns=[str(x) for x in list(batch)],
@@ -45,8 +43,8 @@ class OzonService(BaseModel):
             ads_co = await self.cli.fetch_advertising_company_statistics(data=body)
             if isinstance(ads_co, APIError):
                 return None
-            statistics_ads_result.append(ads_co)
-        return statistics_ads_result
+            # тк метод асинхронный он не принимает более одной партии айдишек поэтому выходим из цикла до получения отчета
+            return ads_co["UUID"]
 
     async def get_report(self, prepared_stats_link):
         ads_results =  await self.cli.fetch_stats_report(prepared_stats_link)

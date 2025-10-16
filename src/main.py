@@ -10,6 +10,7 @@ async def main() -> None:
     date_to = proj_settings.DATE_TO
     cli_ids = proj_settings.OZON_CLI_IDS.split(',')
     cli_secrets = proj_settings.OZON_CLI_SECRETS.split(',')
+    lk_names = proj_settings.OZON_NAME_LK.split(',')
     ozon_cli = OzonClient(
         concurrency=1,
         default_rps=1,
@@ -19,7 +20,9 @@ async def main() -> None:
         refresh_token_url=proj_settings.OZON_REFRESH_TOKEN_URL,
         statistics_status_url=proj_settings.OZON_STATISTICS_STATUSES_URL,
     )
-    await run_pipeline(ozon_cli, cli_ids, cli_secrets, date_from, date_to)
+    await run_pipeline(ozon_cli=ozon_cli, cli_ids=cli_ids,
+                       cli_secrets=cli_secrets,lk_names=lk_names,
+                       date_from=date_from,date_to=date_to)
 
 if __name__ == '__main__':
     asyncio.run(main())
