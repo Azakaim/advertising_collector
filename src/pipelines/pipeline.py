@@ -26,10 +26,11 @@ async def run_pipeline(ozon_cli: OzonClient,
     # если отчеты есть проверяем статусы
     success_statuses_ads_ids = await get_success_statuses_ads_ids(status_reports) if status_reports else None
     # отсортировать id рекламных компаний со статусами ОК, взять только те по которым мы еще не делали запрос на статистику
-    link_by_ads_ids = await get_sorted_ads_ids(success_ads_ids=success_statuses_ads_ids,
-                                              ads_ids=ads_ids,
-                                              date_from=date_since,
-                                              date_to=date_till) if success_statuses_ads_ids else None
+    link_by_ads_ids = await get_sorted_ads_ids(success_ads_ids=success_statuses_ads_ids
+                                                if success_statuses_ads_ids else ads_ids, # если статусов нет то берем ads_ids
+                                               ads_ids=ads_ids,
+                                               date_from=date_since,
+                                               date_to=date_till)
     # собираем отчеты
     reports = []
     for link in link_by_ads_ids :
@@ -47,6 +48,7 @@ async def run_pipeline(ozon_cli: OzonClient,
                                                                   date_from=date_since,
                                                                   date_to=date_till)
     print()
+    # TODO дописать логику для работы если уид получили то коллектим со всех кабинетов
     # if uids:
-    #     #TODO дописать логику для работы если уид получили
-    #     ...
+    #
+    # TODO затем все это закидываем в гугл таблицу

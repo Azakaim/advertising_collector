@@ -28,7 +28,7 @@ async def get_converted_date_by_local(date_since, date_to):
     return date_since.strftime("%Y-%m-%dT%H:%M:%S") + "Z", date_to.strftime("%Y-%m-%dT%H:%M:%S") + "Z"
 
 async def get_success_statuses_ads_ids(success_statuses: StatusUIDCollection) -> list[AdsItem]:
-    items = [si for si in success_statuses.items if si.meta.state == "OK"]
+    items = [si for si in success_statuses.items if si.meta.error is None]
     return items
 
 async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] , ads_ids: list, date_from: date, date_to: date):
@@ -37,18 +37,21 @@ async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] , ads_ids: list, dat
         # переворачиваем список если вдруг найдем одинаковые айдишники с успешным статусом
         # проверив все id получим последний актуальный те первое вхождение
         for sai in success_ads_ids[::-1]:
-            for _id in sai.campaigns:
-                if int(_id.id) not in batch:
-                    last_version_ads_stats_by_id.update({_id.id: ""})
-                else:
-                    if (sai.meta.request.date_from != str(date_from)
-                            and sai.meta.request.date_to != str(date_to)):
+            if hasattr(sai,"campaigns"):
+                for _id in sai.campaigns:
+                    if int(_id.id) not in batch:
                         last_version_ads_stats_by_id.update({_id.id: ""})
                     else:
-                        # TODO доделать случай если и айдишник есть и дата совпадает ,мысль такая что если совпааде тто вернуть последний обьект уид типа для получения
-                        last_version_ads_stats_by_id[_id.id] = sai.meta.link
-                    if last_version_ads_stats_by_id:
-                        last_version_ads_stats_by_id.update(last_version_ads_stats_by_id) if _id.id not in last_version_ads_stats_by_id.keys() else None
+                        if (sai.meta.request.date_from != str(date_from)
+                                and sai.meta.request.date_to != str(date_to)):
+                            last_version_ads_stats_by_id.update({_id.id: ""})
+                        else:
+                            # TODO доделать случай если и айдишник есть и дата совпадает ,мысль такая что если совпааде тто вернуть последний обьект уид типа для получения
+                            last_version_ads_stats_by_id[_id.id] = sai.meta.link
+                        if last_version_ads_stats_by_id:
+                            last_version_ads_stats_by_id.update(last_version_ads_stats_by_id) if _id.id not in last_version_ads_stats_by_id.keys() else None
+            else:
+                last_version_ads_stats_by_id.update({sai: ""})
     changed_id_by_link = await reverse_key_value(last_version_ads_stats_by_id)
     return changed_id_by_link
 
