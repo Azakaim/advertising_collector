@@ -33,7 +33,6 @@ async def get_success_statuses_ads_ids(success_statuses: StatusUIDCollection) ->
 
 async def get_sorted_ads_ids(success_ads_ids: list[AdsItem] | list[str], ads_ids: list, date_from: date, date_to: date):
     last_version_ads_stats_by_id = {}
-    # for batch in ads_ids:#batched(ads_ids, 10):
     # переворачиваем список если вдруг найдем одинаковые айдишники с успешным статусом
     # проверив все id получим последний актуальный те первое вхождение
     common_ads_stats = set()
