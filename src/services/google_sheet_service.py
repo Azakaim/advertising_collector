@@ -5,8 +5,6 @@ from google.oauth2.service_account import Credentials
 from gspread import Spreadsheet
 from pydantic import BaseModel, Field
 
-from src.dto.schemas_dto import AdsOzonSchema
-
 
 class GoogleSheetService(BaseModel):
     scopes: list[str] = Field(default_factory=list)
@@ -31,24 +29,15 @@ class GoogleSheetService(BaseModel):
         except Exception as e:
             raise Exception(e)
 
-    def create_values_to_google_sheet(self, titles: list[str], values: list[Any]) -> list:
-        return titles + values
-
-    async def convert_to_sheet_values(self, lk_name: str, ads_statistics: list[AdsOzonSchema]):
-        values = []
-        for ads in ads_statistics:
-            # TODO дописать конверт
-            value = [lk_name , ads.sku, ads.title, ads.campaign_id, ads.campaign_title, ads.]
-        ...
-
-    def push_to_google_sheet(self,data: list, sheet_name: str) -> None:
+    async def push_to_google_sheet(self,data: list, sheet_name: str) -> None:
         # Выбираем лист
         worksheet = self.sheet.worksheet(sheet_name)
-
+        # стираем данные
+        worksheet.clear()
         # Записываем данные
         worksheet.update(data,"A1")
 
-    def format_google_sheet(self,sh_range: str, sheet_name: str, title_format: bool = False) -> None:
+    async def format_google_sheet(self,sh_range: str, sheet_name: str, title_format: bool = False) -> None:
         # Выбираем лист
         worksheet = self.sheet.worksheet(sheet_name)
         worksheet.format(sh_range, {
@@ -56,7 +45,7 @@ class GoogleSheetService(BaseModel):
         })
         if title_format:
             worksheet.format(sh_range, {
-                             "textFormat": {"bold": True, "italic": True, "fontSize": 12},
+                             "textFormat": {"bold": True, "italic": True, "fontSize": 10},
                              "horizontalAlignment": "CENTER",
                              "verticalAlignment": "MIDDLE"
             })

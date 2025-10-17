@@ -45,6 +45,7 @@ class OzonService(BaseModel):
                 return None
             # тк метод асинхронный он не принимает более одной партии айдишек поэтому выходим из цикла до получения отчета
             return ads_co["UUID"]
+        return None
 
     async def get_report(self, prepared_stats_link):
         ads_results =  await self.cli.fetch_stats_report(prepared_stats_link)

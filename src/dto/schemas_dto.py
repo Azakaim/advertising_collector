@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 from pydantic import Field, dataclasses
 
@@ -96,3 +96,9 @@ class AdsItem:
 class StatusUIDCollection:
     items: list[AdsItem]
     total: str
+
+@dataclasses.dataclass
+class AdsAnalytics:
+    uid: Optional[str | None] = Field(default=None)
+    lk_name: Optional[str] = Field(default_factory=str)
+    reports: Optional[list[AdsOzonSchema]] = Field(default_factory=list)

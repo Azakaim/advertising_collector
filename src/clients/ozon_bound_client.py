@@ -11,7 +11,8 @@ from src.schemas.shemas import RequestBodyAdsCompanies
 log = logging.getLogger("ozon bound client")
 
 class OzonCliBound:
-    def __init__(self, base: OzonClient, client_id: str, client_secret: str ) -> None:
+    def __init__(self, base: OzonClient, client_id: str, client_secret: str, lk_name: str ) -> None:
+        self.lk_name = lk_name
         self._base = base
         self.pyload_refr_token = {
             "client_id": client_id,
