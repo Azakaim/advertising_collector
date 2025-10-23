@@ -1,3 +1,5 @@
+import asyncio
+
 from src.clients.ozon_bound_client import OzonCliBound
 from src.dto.schemas_dto import AdsOzonSchema, AdsAnalytics
 from src.services.ozon_services import OzonService
@@ -43,3 +45,10 @@ async def get_ads_analytics(ozone_bound: OzonCliBound,
                                                                   date_to=date_till)
 
     return AdsAnalytics(uid=uid,reports=reports,lk_name=ozone_bound.lk_name)
+
+async def get_ads_related_skus(ozone_bound: OzonCliBound, data: list[AdsOzonSchema]):
+    oz_service = OzonService(cli=ozone_bound)
+    tasks = [oz_service.get_related_skus(sku=d.sku) for d in data]
+    related_skus = await asyncio.gather(*tasks)
+
+    return ozone_bound.lk_name ,related_skus

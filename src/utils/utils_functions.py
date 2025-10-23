@@ -7,18 +7,26 @@ from src.infrastructure.cache import cache
 from src.schemas.shemas import SellerAccount
 
 
-def extract_sellers(client_ids: list,
+def extract_sellers(client_ads_ids: list,
                     client_secrets: list,
-                    names: list) -> list[SellerAccount]:
+                    lk_names: list,
+                    clients_seller_ids: list[str],
+                    api_keys: list[str]
+                    ) -> list[SellerAccount]:
     """
     Extracts sellers from the environment variables.
     """
-    if len(client_ids) != len(client_secrets) != len(names):
+    if len(client_ads_ids) != len(client_secrets) != len(lk_names) != len(clients_seller_ids) != len(api_keys):
         raise ValueError("Client IDs, API keys, and names must have the same length.")
 
     return [
-        SellerAccount(name=names[i], client_secret=client_secrets[i], client_id=client_ids[i])
-        for i in range(len(client_ids))
+        SellerAccount(lk_name=lk_names[i],
+                      client_secret=client_secrets[i],
+                      client_ads_id=client_ads_ids[i],
+                      client_seller_id=clients_seller_ids[i],
+                      api_key=api_keys[i])
+
+        for i in range(len(client_ads_ids))
     ]
 
 async def get_converted_date_by_local(date_since, date_to):

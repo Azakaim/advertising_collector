@@ -10,6 +10,8 @@ async def main() -> None:
     date_from = proj_settings.DATE_SINCE
     date_to = proj_settings.DATE_TO
     cli_ids = proj_settings.OZON_CLI_IDS.split(',')
+    lk_ids = proj_settings.OZON_CLIENT_SELLER_IDS.split(',')
+    api_keys = proj_settings.OZON_API_KEYS.split(',')
     cli_secrets = proj_settings.OZON_CLI_SECRETS.split(',')
     lk_names = proj_settings.OZON_NAME_LK.split(',')
     # TODO доделать логику работы с сохранением адс в csv
@@ -32,8 +34,12 @@ async def main() -> None:
         ads_companies_url=proj_settings.OZON_ADS_COMPANIES_URL,
         refresh_token_url=proj_settings.OZON_REFRESH_TOKEN_URL,
         statistics_status_url=proj_settings.OZON_STATISTICS_STATUSES_URL,
+        related_skus_url=proj_settings.OZON_RELATED_SKUS_URL,
     )
+
+    # TODO допиши логику получения связанных ску
     await run_pipeline(ozon_cli=ozon_cli, google_sheet=google_sheet,
+                       api_keys=api_keys, lk_ids=lk_ids,
                        cli_ids=cli_ids,cli_secrets=cli_secrets,lk_names=lk_names,
                        date_from=date_from,date_to=date_to)
 

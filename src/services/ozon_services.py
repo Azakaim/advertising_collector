@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 from itertools import batched
 
@@ -50,3 +51,7 @@ class OzonService(BaseModel):
     async def get_report(self, prepared_stats_link):
         ads_results =  await self.cli.fetch_stats_report(prepared_stats_link)
         return AdsOzonSchema.convert(ads_results)
+
+    async def get_related_skus(self, sku: str):
+        related_skus= await self.cli.fetch_related_skus(sku={"sku": [sku]})
+        return sku, related_skus

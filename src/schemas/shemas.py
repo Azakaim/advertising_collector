@@ -48,9 +48,11 @@ class SellerAccount(BaseModel):
     """
     Ozon_cli API settings.
     """
-    name: str = Field(..., description="Name of the seller in Ozon")
+    lk_name: str = Field(..., description="Name of the seller in Ozon")
     client_secret: str = Field(..., description="client_secrets key for Ozon API")
-    client_id: str = Field(..., description="Client ID for Ozon API")
+    client_ads_id: str = Field(..., description="Client ads ID for Ozon API")
+    client_seller_id: str = Field(..., description="Client seller ID for Ozon API")
+    api_key: str = Field(..., description="API key for Ozon API")
 
 class RequestBodyAdsCompanies(BaseModel):
     campaigns: list[str]

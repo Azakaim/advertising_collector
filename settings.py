@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     GOOLGLE_SERVICE_ACCOUNT_CREDS_PATH: str = Field("", env="GOOLGLE_SERVICE_ACCOUNT_CREDS_PATH")
     GOOGLE_SHEET_TITLES: str = Field("", env="GOOGLE_SHEET_TITLES")
 
+    OZON_RELATED_SKUS_URL: str = Field("", env="OZON_RELATED_SKUS_URL")
+    OZON_CLIENT_SELLER_IDS: str = Field("", env="OZON_CLIENT_SELLER_IDS")
+    OZON_API_KEYS: str = Field("", env="OZON_API_KEYS")
     OZON_STATISTICS_REPORT_URL: str = Field("", env="OZON_STATISTICS_REPORT_URL")
     OZON_BASE_URL: str = Field("", env="OZON_BASE_URL")
     OZON_NAME_LK: str = Field("", env="OZON_NAME_LK")

@@ -1,9 +1,5 @@
-import asyncio
 import logging
-import time
 from typing import Optional, Any
-
-from tenacity import sleep
 
 from src.clients.ozon_client import OzonClient
 from src.schemas.shemas import RequestBodyAdsCompanies
@@ -11,20 +7,30 @@ from src.schemas.shemas import RequestBodyAdsCompanies
 log = logging.getLogger("ozon bound client")
 
 class OzonCliBound:
-    def __init__(self, base: OzonClient, client_id: str, client_secret: str, lk_name: str ) -> None:
+    def __init__(self, base: OzonClient,
+                 client_ads_id: str,
+                 client_seller_id: str,
+                 client_secret: str,
+                 lk_name: str,
+                 api_key: str) -> None:
         self.lk_name = lk_name
         self._base = base
+        self.addition_headers = {
+            "Client-Id": client_seller_id,
+            "Api-Key": api_key,
+            "Content-Type": "application/json",
+        }
         self.pyload_refr_token = {
-            "client_id": client_id,
+            "client_id": client_ads_id,
             "client_secret": client_secret,
             "grant_type": "client_credentials",
         }
-        self._jwt: Optional[str] = None
         self._headers: dict[str, str] = {
             "Host": "api-performance.ozon.ru:443",
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+        self._jwt: Optional[str] = None
 
     @property
     def headers(self) -> dict[str, str]:
@@ -57,6 +63,9 @@ class OzonCliBound:
     async def fetch_advertising_ids(self) -> Optional[Any]:
         await self.refresh_token()
         return await self._base.fetch_advertising_ids(headers=self.headers)
+
+    async def fetch_related_skus(self, sku: dict[str, list[str]]) -> Optional[Any]:
+        return await self._base.fetch_related_skus(sku=sku, headers=self.addition_headers)
 
     async def fetch_stats_report(self, link: str) -> Optional[Any]:
         return await self._base.fetch_stats_report(link, headers=self.headers)

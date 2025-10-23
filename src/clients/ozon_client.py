@@ -17,6 +17,7 @@ class OzonClient(BaseRateLimitedHttpClient):
     ads_companies_url: str
     refresh_token_url: str
     statistics_status_url: str
+    related_skus_url: str
 
     _per_endpoint_rps: Optional[Dict[str, int]] = PrivateAttr(default_factory=dict) # например: {"/v2/product/info": 5}
 
@@ -30,6 +31,9 @@ class OzonClient(BaseRateLimitedHttpClient):
 
     async def fetch_advertising_ids(self, headers: dict) -> Optional[Any]:
         return await self.request("GET", self.ads_ids_url, headers=headers)
+
+    async def fetch_related_skus(self,sku: dict[str, list[str]], headers: dict) -> Optional[Any]:
+        return await self.request("POST", self.related_skus_url,json=sku, headers=headers)
 
     async def fetch_stats_report(self,link: str, headers: dict) -> Optional[Any]:
         return await self.request("GET", self.base_url + link, headers=headers)
